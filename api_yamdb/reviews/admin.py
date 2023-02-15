@@ -1,3 +1,5 @@
 from django.contrib import admin
+from reviews.models import YaMdbUser
 
-# Register your models here.
+
+admin.site.register(YaMdbUser)
