@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import AbstractUser
+from reviews.services import validate_name_me
 
 
 ROLE_SET = (
@@ -12,6 +13,16 @@ ROLE_SET = (
 
 class YaMdbUser(AbstractUser):
     """Переопределенная можель пользователя."""
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        validators=[validate_name_me]
+    )
+    email = models.EmailField(
+        'E-mail',
+        max_length=254,
+        unique=True
+    )
     bio = models.TextField(
         'Биография',
         blank=True,
