@@ -14,6 +14,7 @@ ROLE_SET = (
 class YaMdbUser(AbstractUser):
     """Переопределенная можель пользователя."""
     username = models.CharField(
+        'Имя пользователя',
         max_length=150,
         unique=True,
         validators=[validate_name_me]
