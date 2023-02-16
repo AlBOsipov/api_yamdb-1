@@ -30,6 +30,7 @@ class YaMdbUser(AbstractUser):
     )
     role = models.CharField(
         'Уровень доступа',
+        max_length=15,
         choices=ROLE_SET,
         default='user',
     )
