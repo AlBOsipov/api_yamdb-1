@@ -45,7 +45,7 @@ class YaMdbUser(AbstractUser):
         return f'{self.first_name} {self.last_name}'
 
 
-class Title():
+class Title(models.Model):
     pass
 
 
