@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from api.views import CreateUserAPIView, SelfUserPageViewSet
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +27,14 @@ urlpatterns = [
         TemplateView.as_view(template_name='redoc.html'),
         name='redoc'
     ),
+    path(
+        'v1/api/auth/token/',
+        TokenObtainPairView.as_view(),
+        # на сколько я пока понимаю нужна новая вьюха
+        # которая бы требовала username and confimation_code
+        # Либоа как-то переопределить стоковую
+        name='token_obtain_pair'
+    ),
+    path('api/v1/auth/signup/', CreateUserAPIView.as_view()),
+    path('v1/api/users/me/', SelfUserPageViewSet),
 ]
