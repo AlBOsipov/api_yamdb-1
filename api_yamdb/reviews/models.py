@@ -90,24 +90,28 @@ class Title(models.Model):
     """Модель произведений"""
 
     name = models.CharField(max_length=256)
-    year = models.IntegerField()
+    year = models.PositiveIntegerField()
     description = models.TextField()
     category = models.ForeignKey(
-        # тут вопрос: правильно ли тут писать on_delete=models.CASCADE?
-        Category, on_delete=models.CASCADE, related_name='titles'
+        Category, null=True, on_delete=models.SET_NULL, related_name='titles'
     )
-    genre = models.ForeignKey(
-        Genre, on_delete=models.CASCADE, related_name="titles"
-    )
+    genre = models.ManyToManyField(Genre, through="GenreTitle")
 
     class Meta:
-        # Тут не совсем понял, как фильтровать по slug у категории и жанра
-        ordering = ('-name', '-year', 'category', 'genre',)
+        # ordering = ('name', 'year', 'category', 'genre',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
     def __str__(self):
         return self.name
+
+
+class GenreTitle(models.Model):
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.genre} {self.title}'
 
 
 class Review(models.Model):
