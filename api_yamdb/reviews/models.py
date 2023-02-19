@@ -107,6 +107,7 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
+    """Модель для связи многим ко многим произведения и жанра"""
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
