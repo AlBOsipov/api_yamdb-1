@@ -72,7 +72,7 @@ class AuthUserAPIView(APIView):
         refresh = RefreshToken.for_user(user)
         return {'access': str(refresh.access_token)}
 
-
+# Эндпоинт /users/me/
 class SelfUserPageViewSet(viewsets.ModelViewSet):
     """Получение данных о себе."""
     serializer_class = SelfUserPageSerializer
