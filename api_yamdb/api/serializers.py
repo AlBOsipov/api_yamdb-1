@@ -5,21 +5,22 @@ from reviews.models import YaMdbUser
 from rest_framework import serializers
 
 from reviews.models import YaMdbUser
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.core.exceptions import ValidationError
+from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import default_token_generator
+from reviews.models import YaMdbUser
 
 # Эндпоинт /singup/
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta(object):
         model = YaMdbUser
-        fields = ('email', 'username', 'confirmation_code')
+        fields = ('email', 'username')
 
 # Эндпоинт /users/me/
 class SelfUserPageSerializer(serializers.ModelSerializer):
     """Сериализатор своей страницы."""
-    username = serializers.SlugRelatedField(
-        read_only=True, slug_field="username"
-    )
 
     class Meta:
         fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')

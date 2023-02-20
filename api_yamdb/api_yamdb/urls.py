@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
-from rest_framework_simplejwt.views import TokenObtainPairView
+
 from api.views import CreateUserAPIView, SelfUserPageViewSet, TokenView
 
 
@@ -30,12 +30,13 @@ urlpatterns = [
     path(
         'v1/api/auth/token/',
         TokenView.as_view(),
+        # GetTokenConfirmationView.as_view(),
         # TokenObtainPairView.as_view(),
         # на сколько я пока понимаю нужна новая вьюха
         # которая бы требовала username and confimation_code
         # Либоа как-то переопределить стоковую
-        name='token_obtain_pair'
+        # name='token_obtain_pair'
     ),
     path('api/v1/auth/signup/', CreateUserAPIView.as_view()),
-    path('v1/api/users/me/', SelfUserPageViewSet),
+    path('api/v1/users/me/', SelfUserPageViewSet),
 ]
