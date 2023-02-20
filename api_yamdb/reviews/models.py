@@ -1,6 +1,7 @@
 from django.db import models
-from django.core.validators import (MinValueValidator, MaxValueValidator, 
-                                    RegexValidator)
+from django.core.validators import (
+    MinValueValidator, MaxValueValidator, RegexValidator
+)
 from reviews.services import validate_name_me
 
 from django.contrib.auth.models import AbstractUser
@@ -90,15 +91,15 @@ class Title(models.Model):
     """Модель произведений"""
 
     name = models.CharField(max_length=256)
-    year = models.PositiveIntegerField()
+    year = models.PositiveIntegerField(null=True)
     description = models.TextField()
     category = models.ForeignKey(
         Category, null=True, on_delete=models.SET_NULL, related_name='titles'
     )
-    genre = models.ManyToManyField(Genre, through="GenreTitle")
+    genres = models.ManyToManyField(Genre, through='GenreTitle')
 
     class Meta:
-        # ordering = ('name', 'year', 'category', 'genre',)
+        # ordering = ('name', 'year', 'category', 'genres',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
@@ -113,6 +114,10 @@ class GenreTitle(models.Model):
 
     def __str__(self):
         return f'{self.genre} {self.title}'
+    
+    class Meta:
+        verbose_name = 'Жанр-произведение'
+        verbose_name_plural = 'Жанры-произведения'
 
 
 class Review(models.Model):
