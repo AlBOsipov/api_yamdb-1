@@ -2,20 +2,17 @@ from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
 
 from rest_framework import status
-from rest_framework import viewsets
+
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
+
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from .serializers import UserSerializer, SelfUserPageSerializer, TokenSerializer
-from reviews.models import YaMdbUser
-
 from rest_framework_simplejwt.tokens import AccessToken
 
-from django.contrib.auth import authenticate
-
+from .serializers import (UserSerializer,
+                          SelfUserPageSerializer, TokenSerializer)
+from reviews.models import YaMdbUser
 
 
 # Эндпоинт /singup/
@@ -41,7 +38,7 @@ class CreateUserAPIView(APIView):
         user.confirmation_code = confirmation_code
         user.save()
         return confirmation_code
-        
+
     def send_code_on_email(self, user, token):
         """Отправка кода подтверждения на почту."""
         header = 'Ваш код подтверждения'
@@ -54,7 +51,7 @@ class CreateUserAPIView(APIView):
         try:
             send_mail(header, message, mail_from, [email])
         except Exception as error:
-            print(f'Хотели написать но, {error}')
+            return (f'Хотели написать но, {error}')
 
 
 # Эндпоинт /users/me/
@@ -64,11 +61,15 @@ class SelfUserPageViewSet(APIView):
     def get(request):
         serializer = SelfUserPageSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # Эндпоинт /token/
 # Принмиает для поля username и confirmation_code
 # Отдает access JWT токен
 class TokenView(TokenObtainPairView):
+    """Получение токена."""
     serializer_class = TokenSerializer
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -93,17 +94,16 @@ class TokenView(TokenObtainPairView):
         # Проверяем, что переданный код подтверждения верен
         if not default_token_generator.check_token(user, code):
             return Response({
-                'error': f'Неверный код подтвер ждения {code}'
+                'error': 'Неверный код подтверждения'
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        # Аутентифицируем пользователя и генерируем токен
-        user = authenticate(request=request, username=username, confirmation_code=code)
+        # Отправляем токен
         try:
             refresh = AccessToken.for_user(user)
             return Response({
                 'token': str(refresh),
             })
-        except:
+        except Exception as error:
             return Response({
-                'error': f'Неверный код подтверждения {code}'
+                'error': f'Неверный код подтверждения {error}'
             }, status=status.HTTP_400_BAD_REQUEST)
