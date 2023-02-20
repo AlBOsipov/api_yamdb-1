@@ -12,7 +12,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
     serializer_class = TitleSerialzier
     queryset = Title.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    # permission_classes = (IsAuthenticatedOrReadOnly, )
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -20,7 +20,7 @@ class GenreViewSet(viewsets.ModelViewSet):
 
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    # permission_classes = (IsAuthenticatedOrReadOnly, )
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -28,7 +28,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    # permission_classes = (IsAuthenticatedOrReadOnly, )
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

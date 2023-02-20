@@ -4,7 +4,7 @@ from reviews.models import Review, Comment, Title, Category, Genre
 
 class TitleSerialzier(serializers.ModelSerializer):
     """Сериализатор для объекта класса Title"""
-
+    
     class Meta:
         model = Title
         fields = ('id', 'name', 'year',
@@ -20,10 +20,10 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    """Сериализатор для объекта класса Category"""
+    """Сериализатор для объекта класса Genre"""
 
     class Meta:
-        model = Category
+        model = Genre
         fields = ("id", "name", "slug")
 
 

@@ -95,7 +95,7 @@ class Title(models.Model):
     category = models.ForeignKey(
         Category, null=True, on_delete=models.SET_NULL, related_name='titles'
     )
-    genre = models.ManyToManyField(Genre, through="GenreTitle")
+    genre = models.ManyToManyField(Genre, through='GenreTitle')
 
     class Meta:
         # ordering = ('name', 'year', 'category', 'genre',)
