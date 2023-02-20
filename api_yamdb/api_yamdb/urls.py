@@ -27,16 +27,7 @@ urlpatterns = [
         TemplateView.as_view(template_name='redoc.html'),
         name='redoc'
     ),
-    path(
-        'v1/api/auth/token/',
-        TokenView.as_view(),
-        # GetTokenConfirmationView.as_view(),
-        # TokenObtainPairView.as_view(),
-        # на сколько я пока понимаю нужна новая вьюха
-        # которая бы требовала username and confimation_code
-        # Либоа как-то переопределить стоковую
-        # name='token_obtain_pair'
-    ),
+    path('v1/api/auth/token/', TokenView.as_view(),),
     path('api/v1/auth/signup/', CreateUserAPIView.as_view()),
     path('api/v1/users/me/', SelfUserPageViewSet),
 ]

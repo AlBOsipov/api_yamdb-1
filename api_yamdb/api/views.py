@@ -7,8 +7,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import UserSerializer, SelfUserPageSerializer, TokenSerializer
+from reviews.models import YaMdbUser
 
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -65,18 +67,43 @@ class SelfUserPageViewSet(APIView):
 # Эндпоинт /token/
 # Принмиает для поля username и confirmation_code
 # Отдает access JWT токен
-class TokenView(APIView):
+class TokenView(TokenObtainPairView):
+    serializer_class = TokenSerializer
     def post(self, request):
-        serializer = TokenSerializer(data=request.data)
-        if serializer.is_valid():
-            username = serializer.validated_data['username']
-            code = serializer.validated_data['confirmation_code']
-            user = authenticate(request, username=username, confirmation_code=code)
-            if user:
-                refresh = AccessToken.for_user(user)
-                return Response({'token': str(refresh)}, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
+        username = serializer.validated_data.get('username')
+        code = serializer.validated_data.get('confirmation_code')
+
+        # Проверяем, что оба поля заполнены
+        if not username or not code:
+            return Response({
+                'error': 'username и code должны быть заполнены'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Проверяем, что пользователь с таким именем существует
+        try:
+            user = YaMdbUser.objects.get(username=username)
+        except YaMdbUser.DoesNotExist:
+            return Response({
+                'error': 'Пользователь с таким именем не найден'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Проверяем, что переданный код подтверждения верен
+        if not default_token_generator.check_token(user, code):
+            return Response({
+                'error': f'Неверный код подтвер ждения {code}'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Аутентифицируем пользователя и генерируем токен
+        user = authenticate(request=request, username=username, confirmation_code=code)
+        try:
+            refresh = AccessToken.for_user(user)
+            return Response({
+                'token': str(refresh),
+            })
+        except:
+            return Response({
+                'error': f'Неверный код подтверждения {code}'
+            }, status=status.HTTP_400_BAD_REQUEST)
