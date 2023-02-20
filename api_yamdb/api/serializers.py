@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from reviews.models import Review, Comment, Title, Category, Genre
+from reviews.models import Review, Comment, Title, Category, Genre, GenreTitle
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -21,13 +21,25 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleSerialzier(serializers.ModelSerializer):
     """Сериализатор для объекта класса Title"""
 
-    genre = GenreSerializer(many=True)
+    genres = GenreSerializer(many=True)
     category = CategorySerializer()
+
+    def create(self, validated_data):
+        genres = validated_data.pop('genres')
+        category = validated_data.pop('category')
+        current_category, status = Category.objects.get_or_create(**category)
+        validated_data['category'] = current_category
+        title = Title.objects.create(**validated_data)
+
+        for genre in genres:
+            current_genres, status = Genre.objects.get_or_create(**genre)
+            GenreTitle.objects.create(genre=current_genres, title=title)
+        return title
 
     class Meta:
         model = Title
         fields = ('name', 'year',
-                  'description', 'category', 'genre')
+                  'description', 'category', 'genres')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
