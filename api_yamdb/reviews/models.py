@@ -1,6 +1,7 @@
 from django.db import models
-from django.core.validators import (MinValueValidator, MaxValueValidator, 
-                                    RegexValidator)
+from django.core.validators import (
+    MinValueValidator, MaxValueValidator, RegexValidator
+)
 from reviews.services import validate_name_me
 
 from django.contrib.auth.models import AbstractUser
