@@ -113,6 +113,10 @@ class GenreTitle(models.Model):
 
     def __str__(self):
         return f'{self.genre} {self.title}'
+    
+    class Meta:
+        verbose_name = 'Жанр-произведение'
+        verbose_name_plural = 'Жанры-произведения'
 
 
 class Review(models.Model):
