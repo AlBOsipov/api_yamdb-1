@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import (
     MinValueValidator, MaxValueValidator, RegexValidator
 )
+import datetime
 from reviews.services import validate_name_me
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
@@ -130,7 +131,10 @@ class Title(models.Model):
     """Модель произведений"""
 
     name = models.CharField(max_length=256)
-    year = models.PositiveIntegerField(null=True)
+    year = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(
+                                            datetime.datetime.now().year)]
+    )
     description = models.TextField()
     category = models.ForeignKey(
         Category, null=True, on_delete=models.SET_NULL, related_name='titles'
