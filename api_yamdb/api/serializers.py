@@ -7,7 +7,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("name", "slug")
+        fields = ('id', 'name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -15,7 +15,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = ("name", "slug")
+        fields = ('id', 'name', 'slug')
 
 
 class TitleSerialzier(serializers.ModelSerializer):
@@ -38,7 +38,7 @@ class TitleSerialzier(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ('name', 'year',
+        fields = ('id', 'name', 'year',
                   'description', 'category', 'genres')
 
 
