@@ -69,6 +69,7 @@ class SelfUserPageViewSet(APIView):
 class TokenView(TokenObtainPairView):
     """Получение токена."""
     serializer_class = TokenSerializer
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
