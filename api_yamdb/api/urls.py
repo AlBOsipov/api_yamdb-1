@@ -4,6 +4,7 @@ from .views import (
     ReviewViewSet, CommentViewSet,
     TitleViewSet, GenreViewSet, CategoriesViewSet
 )
+from api.views import CreateUserAPIView, SelfUserPageViewSet, TokenView
 
 
 app_name = 'api'
@@ -25,4 +26,7 @@ router.register(
 
 urlpatterns = [
     path('v1/', include(router.urls)),
+    path('v1/auth/token/', TokenView.as_view(),),
+    path('v1/auth/signup/', CreateUserAPIView.as_view()),
+    path('v1/users/me/', SelfUserPageViewSet),
 ]

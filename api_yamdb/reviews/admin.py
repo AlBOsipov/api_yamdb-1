@@ -5,6 +5,19 @@ from reviews.models import (
 )
 
 
+class UserAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'username',
+        'email',
+        'first_name',
+        'last_name',
+        'bio',
+        'role',
+    )
+    search_fields = ('username',)
+
+
 admin.site.register(YaMdbUser)
 admin.site.register(Title)
 admin.site.register(Genre)
