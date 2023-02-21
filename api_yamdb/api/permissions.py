@@ -36,7 +36,6 @@ class SuperPermission(BasePermission):
 
 class AuthorOrAdmin(permissions.BasePermission):
     """Разрешение доступа к /me/ автору и админу."""
-
     def has_object_permission(self, request, view, obj):
         return request.user.is_authenticated and (
             request.user.role == 'admin'
@@ -48,7 +47,6 @@ class AuthorOrAdmin(permissions.BasePermission):
 
 class AuthorOrModeratorOrAdminOrReadOnly(permissions.BasePermission):
     """Разрешение доступа автору, админу, модератору."""
-
     def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS

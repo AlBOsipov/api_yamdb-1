@@ -1,11 +1,11 @@
-from django.db import models
-from django.core.validators import (
-    MinValueValidator, MaxValueValidator, RegexValidator
-)
 import datetime
-from reviews.services import validate_name_me
+
+from django.db import models
+from django.core.validators import (MinValueValidator, MaxValueValidator,
+                                    RegexValidator)
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
+from reviews.services import validate_name_me
 
 ROLE_SET = (
     ('user', 'Пользователь'),
@@ -83,8 +83,7 @@ class YaMdbUser(AbstractUser):
 
 
 class Category(models.Model):
-    """Модель категорий"""
-
+    """Модель категорий."""
     name = models.CharField(max_length=256, verbose_name="Название")
     slug = models.SlugField(
         max_length=50,
@@ -103,8 +102,7 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    """Модель жанров"""
-
+    """Модель жанров."""
     name = models.CharField(max_length=256, verbose_name='Название')
     slug = models.SlugField(
         max_length=50,
@@ -123,8 +121,7 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    """Модель произведений"""
-
+    """Модель произведений."""
     name = models.CharField(max_length=256)
     year = models.IntegerField(
         validators=[MinValueValidator(0),
@@ -146,7 +143,7 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    """Модель для связи многим ко многим произведения и жанра"""
+    """Модель для связи многим ко многим произведения и жанра."""
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
@@ -160,7 +157,6 @@ class GenreTitle(models.Model):
 
 class Review(models.Model):
     """Модель для отзывов к произведениям."""
-
     author = models.ForeignKey(
         YaMdbUser, on_delete=models.CASCADE, related_name='reviews')
     title = models.ForeignKey(
@@ -182,7 +178,6 @@ class Review(models.Model):
 
 class Comment(models.Model):
     """Модель для комментариев к отзывам."""
-
     author = models.ForeignKey(
         YaMdbUser, on_delete=models.CASCADE, related_name='comments')
     review = models.ForeignKey(

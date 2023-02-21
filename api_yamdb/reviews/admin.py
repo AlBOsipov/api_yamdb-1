@@ -1,8 +1,6 @@
 from django.contrib import admin
-from reviews.models import (
-    YaMdbUser, Title, Genre, Category,
-    GenreTitle, Review, Comment
-)
+from reviews.models import (YaMdbUser, Title, Genre, Category, GenreTitle,
+                            Review, Comment)
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -18,7 +16,7 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ('username',)
 
 
-admin.site.register(YaMdbUser)
+admin.site.register(YaMdbUser, UserAdmin)
 admin.site.register(Title)
 admin.site.register(Genre)
 admin.site.register(Category)
