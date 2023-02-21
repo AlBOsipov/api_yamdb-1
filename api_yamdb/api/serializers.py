@@ -1,12 +1,11 @@
 from rest_framework import serializers
-from reviews.models import YaMdbUser
 
-from reviews.models import Review, Comment, Title, Category, Genre, GenreTitle
+from reviews.models import (Review, Comment, Title, Category, Genre,
+                            GenreTitle, YaMdbUser)
 
 
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для объекта класса Category"""
-
     class Meta:
         model = Category
         fields = ('id', 'name', 'slug')
@@ -14,7 +13,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор для объекта класса Genre"""
-
     class Meta:
         model = Genre
         fields = ('id', 'name', 'slug')
@@ -22,7 +20,6 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitleSerialzier(serializers.ModelSerializer):
     """Сериализатор для объекта класса Title"""
-
     genres = GenreSerializer(many=True)
     category = CategorySerializer()
 
@@ -87,27 +84,14 @@ class CommentSerializer(serializers.ModelSerializer):
 # Эндпоинт /singup/
 class UserSingUpSerializer(serializers.ModelSerializer):
     """Сериализатор для объекта класса регистрации."""
-
     class Meta(object):
         model = YaMdbUser
         fields = ('email', 'username',)
 
-    def validate(self, data):
-        username = data['username']
-        email = data['email']
-        if YaMdbUser.objects.filter(username=username).exists():
-            user = YaMdbUser.objects.get(username=username)
-            if user.email != email:
-                raise serializers.ValidationError('Пользователь с таким username уже существует, но email не соответствует')
-            else:
-                confirmation_code = self.generat_conf_code(user)
-                self.send_code_on_email(user, confirmation_code)
-                raise serializers.ValidationError('Код подтверждения отправлен на почту.')
-        return data
-
 
 # Эндпоинт /user/
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для объекта класса user."""
     class Meta:
         model = YaMdbUser
         fields = (
@@ -140,5 +124,6 @@ class SelfUserPageSerializer(serializers.ModelSerializer):
 
 # Эндпоинт /token/
 class TokenSerializer(serializers.Serializer):
+    """Сериализатор получения токена."""
     username = serializers.CharField(max_length=150,)
     confirmation_code = serializers.CharField(max_length=50,)
