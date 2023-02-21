@@ -46,7 +46,7 @@ class AuthorOrAdmin(permissions.BasePermission):
         )
 
 
-class RoleOrReadOnly(permissions.BasePermission):
+class AuthorOrModeratorOrAdminOrReadOnly(permissions.BasePermission):
     """Разрешение доступа автору, админу, модератору."""
 
     def has_object_permission(self, request, view, obj):
