@@ -23,7 +23,10 @@ from rest_framework_simplejwt.tokens import AccessToken
 from .serializers import (UserSerializer, UserSingUpSerializer,
                           SelfUserPageSerializer, TokenSerializer)
 from reviews.models import YaMdbUser
-from .permissions import AdminPermission
+from .permissions import (
+    AuthorOrAdmin, AuthorOrModeratorOrAdminOrReadOnly, AdminPermission
+)
+
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -53,7 +56,10 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями отзывов."""
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        AuthorOrModeratorOrAdminOrReadOnly,
+    )
 
     def get_queryset(self):
         '''Функция возвращения всех комментариев поста.'''
@@ -72,7 +78,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями комментариев."""
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        AuthorOrModeratorOrAdminOrReadOnly,
+    )
 
     def get_queryset(self):
         '''Функция возвращения всех комментариев поста.'''
