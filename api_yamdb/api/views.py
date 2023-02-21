@@ -21,8 +21,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 from .serializers import (UserSerializer,
                           SelfUserPageSerializer, TokenSerializer)
 from reviews.models import YaMdbUser
-from rest_framework.permissions import (
-    AuthorOrModeratorOrAdminOrReadOnly,
+from .permissions import (
+    AuthorOrAdmin, AuthorOrModeratorOrAdminOrReadOnly
 )
 
 
