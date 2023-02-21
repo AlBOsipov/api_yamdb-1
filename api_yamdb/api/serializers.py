@@ -85,16 +85,45 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 # Эндпоинт /singup/
-class UserSerializer(serializers.ModelSerializer):
+class UserSingUpSerializer(serializers.ModelSerializer):
+    """Сериализатор для объекта класса регистрации."""
 
     class Meta(object):
         model = YaMdbUser
-        fields = ('email', 'username', 'confirmation_code')
+        fields = ('email', 'username',)
+
+    def validate(self, data):
+        username = data['username']
+        email = data['email']
+        if YaMdbUser.objects.filter(username=username).exists():
+            user = YaMdbUser.objects.get(username=username)
+            if user.email != email:
+                raise serializers.ValidationError('Пользователь с таким username уже существует, но email не соответствует')
+            else:
+                confirmation_code = self.generat_conf_code(user)
+                self.send_code_on_email(user, confirmation_code)
+                raise serializers.ValidationError('Код подтверждения отправлен на почту.')
+        return data
+
+
+# Эндпоинт /user/
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = YaMdbUser
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role'
+        )
 
 
 # Эндпоинт /users/me/
 class SelfUserPageSerializer(serializers.ModelSerializer):
     """Сериализатор своей страницы."""
+    last_name = serializers.CharField(max_length=150)
 
     class Meta:
         fields = (
@@ -106,10 +135,10 @@ class SelfUserPageSerializer(serializers.ModelSerializer):
             'role'
         )
         model = YaMdbUser
+        read_only_fields = ('role',)
 
 
 # Эндпоинт /token/
 class TokenSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    confirmation_code = serializers.CharField()
-
+    username = serializers.CharField(max_length=150,)
+    confirmation_code = serializers.CharField(max_length=50,)

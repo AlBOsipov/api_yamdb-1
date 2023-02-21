@@ -17,11 +17,8 @@ ROLE_SET = (
 class UserManager(BaseUserManager):
     """Новые правила регистрации юзера."""
     def create_user(self, email, password, **extra_fields):
-        """
-        Create and save a User with the given email and password.
-        """
         if not email:
-            raise ValueError(('The Email must be set'))
+            raise ValueError(('Пароль обязателен.'))
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_unusable_password()
@@ -29,7 +26,6 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password, **extra_fields):
-        """Create and save a SuperUser with the given email and password."""
         extra_fields.setdefault('is_admin', True)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -43,7 +39,6 @@ class UserManager(BaseUserManager):
 
 class YaMdbUser(AbstractUser):
     """Переопределенная модель пользователя."""
-
     username = models.CharField(
         'Имя пользователя',
         max_length=150,
@@ -132,8 +127,8 @@ class Title(models.Model):
 
     name = models.CharField(max_length=256)
     year = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(
-                                            datetime.datetime.now().year)]
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(datetime.datetime.now().year)]
     )
     description = models.TextField()
     category = models.ForeignKey(
@@ -157,7 +152,7 @@ class GenreTitle(models.Model):
 
     def __str__(self):
         return f'{self.genre} {self.title}'
-    
+
     class Meta:
         verbose_name = 'Жанр-произведение'
         verbose_name_plural = 'Жанры-произведения'
@@ -202,4 +197,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
-
