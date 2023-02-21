@@ -140,15 +140,6 @@ class CreateUserAPIView(APIView):
             return (f'Хотели написать но, {error}')
 
 
-# Эндпоинт /users/me/
-class SelfUserPageViewSet(APIView):
-    """API для получения информации о собственной странице пользователя."""
-
-    def get(request):
-        serializer = SelfUserPageSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 # Эндпоинт /token/
 # Принмиает для поля username и confirmation_code
 # Отдает access JWT токен

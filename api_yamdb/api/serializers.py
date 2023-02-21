@@ -1,9 +1,7 @@
 from rest_framework import serializers
 from reviews.models import YaMdbUser
-from rest_framework.exceptions import ValidationError
+
 from reviews.models import Review, Comment, Title, Category, Genre, GenreTitle
-from rest_framework.response import Response
-from rest_framework import status
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -106,6 +104,7 @@ class UserSingUpSerializer(serializers.ModelSerializer):
                 self.send_code_on_email(user, confirmation_code)
                 raise serializers.ValidationError('Код подтверждения отправлен на почту.')
         return data
+
 
 # Эндпоинт /user/
 class UserSerializer(serializers.ModelSerializer):
