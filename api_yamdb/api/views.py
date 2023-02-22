@@ -2,6 +2,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 
+from rest_framework import mixins
 from rest_framework import status, filters, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -26,64 +27,47 @@ class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями произведений"""
     serializer_class = TitleSerialzier
     queryset = Title.objects.all()
-    # permission_classes = (IsAuthenticatedOrReadOnly, AdminPermission)
+    # permission_classes = (IsAuthIsAdminPermission,)
 
     def get_permissions(self):
         if self.action == 'list':
             permission_classes = [AllowAny]
-        elif self.action == 'destroy':
-            permission_classes = [IsAuthIsAdminPermission]
         else:
             permission_classes = [IsAuthIsAdminPermission]
         return [permission() for permission in permission_classes]
 
-    # def get_permissions(self):
-    #     if self.action == 'list':
-    #         permissions_classes = [AllowAny]
-    #     else:
-    #         permissions_classes = [IsAuthIsAdminPermission]
-    #     return [permissions() for permission in permissions_classes]
 
-
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                   mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """Вьюсет для работы с моделями жанров"""
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
     # permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = 'slug'
 
     def get_permissions(self):
         if self.action == 'list':
             permission_classes = [AllowAny]
-        elif self.action == 'destroy':
-            permission_classes = [IsAuthIsAdminPermission]
         else:
             permission_classes = [IsAuthIsAdminPermission]
         return [permission() for permission in permission_classes]
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
+class CategoriesViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                        mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """Вьюсет для работы с моделями категорий"""
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
     # permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
-    # def get_permissions(self):
-    #     if self.action == 'list':
-    #         permissions_classes = [AllowAny]
-    #     else:
-    #         permissions_classes = [IsAuthIsAdminPermission]
-    #     return [permission() for permission in permissions_classes]
-    
     def get_permissions(self):
         if self.action == 'list':
             permission_classes = [AllowAny]
-        elif self.action == 'destroy':
-            permission_classes = [IsAuthIsAdminPermission]
         else:
             permission_classes = [IsAuthIsAdminPermission]
         return [permission() for permission in permission_classes]
