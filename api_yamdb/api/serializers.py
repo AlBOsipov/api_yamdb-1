@@ -8,23 +8,25 @@ class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для объекта класса Category"""
     class Meta:
         model = Category
-        fields = ('id', 'name', 'slug')
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
 
 
 class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор для объекта класса Genre"""
     class Meta:
         model = Genre
-        fields = ('id', 'name', 'slug')
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
 
 
 class TitleSerialzier(serializers.ModelSerializer):
     """Сериализатор для объекта класса Title"""
-    genres = GenreSerializer(many=True)
+    genre = GenreSerializer(many=True)
     category = CategorySerializer()
 
     def create(self, validated_data):
-        genres = validated_data.pop('genres')
+        genres = validated_data.pop('genre')
         category = validated_data.pop('category')
         current_category, status = Category.objects.get_or_create(**category)
         validated_data['category'] = current_category
@@ -38,7 +40,7 @@ class TitleSerialzier(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = ('id', 'name', 'year',
-                  'description', 'category', 'genres')
+                  'description', 'category', 'genre')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -87,6 +89,7 @@ class UserSingUpSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = YaMdbUser
         fields = ('email', 'username',)
+        read_only_fields = ('role',)
 
 
 # Эндпоинт /user/

@@ -21,15 +21,15 @@ class UserManager(BaseUserManager):
             raise ValueError(('Пароль обязателен.'))
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_unusable_password()
+        user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault('is_admin', True)
+    def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('role', 'admin')  # установка роли 'admin'
         if extra_fields.get('is_staff') is not True:
             raise ValueError(('Superuser must have is_staff=True.'))
         if extra_fields.get('is_superuser') is not True:
@@ -93,7 +93,7 @@ class Category(models.Model):
     )
 
     class Meta:
-        ordering = ('-name',)
+        # ordering = ('-name',)
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -131,7 +131,7 @@ class Title(models.Model):
     category = models.ForeignKey(
         Category, null=True, on_delete=models.SET_NULL, related_name='titles'
     )
-    genres = models.ManyToManyField(Genre, through='GenreTitle')
+    genre = models.ManyToManyField(Genre, through='GenreTitle')
 
     class Meta:
         # ordering = ('name', 'year', 'category', 'genres',)
