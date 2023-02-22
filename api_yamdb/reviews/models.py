@@ -127,7 +127,7 @@ class Title(models.Model):
         validators=[MinValueValidator(0),
                     MaxValueValidator(datetime.datetime.now().year)]
     )
-    description = models.TextField()
+    description = models.TextField(null=True)
     category = models.ForeignKey(
         Category, null=True, on_delete=models.SET_NULL, related_name='titles'
     )
