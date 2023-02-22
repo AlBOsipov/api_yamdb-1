@@ -8,14 +8,14 @@ class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для объекта класса Category"""
     class Meta:
         model = Category
-        fields = ('id', 'name', 'slug')
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор для объекта класса Genre"""
     class Meta:
         model = Genre
-        fields = ('id', 'name', 'slug')
+        fields = ('name', 'slug')
 
 
 class TitleSerialzier(serializers.ModelSerializer):

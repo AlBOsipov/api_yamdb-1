@@ -33,14 +33,18 @@ class GenreViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями жанров"""
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, AdminPermission)
+    permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями категорий"""
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, AdminPermission)
+    permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
