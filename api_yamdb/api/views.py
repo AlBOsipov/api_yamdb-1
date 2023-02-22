@@ -26,14 +26,14 @@ class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями произведений"""
     serializer_class = TitleSerialzier
     queryset = Title.objects.all()
-    # permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAuthenticatedOrReadOnly, AdminPermission)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями жанров"""
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-    # permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAuthenticatedOrReadOnly, AdminPermission)
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
