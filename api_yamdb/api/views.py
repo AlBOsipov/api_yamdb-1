@@ -15,26 +15,26 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Review, Title, Genre, Category, YaMdbUser
 from api.permissions import (AuthorOrModeratorOrAdminOrReadOnly,
-                             AdminPermission, IsAuthIsAdminPermission)
+                             AdminPermission, IsAuthIsAdminPermission,
+                             AdminOrReadOnly)
 from api.serializers import (ReviewSerializer, CommentSerializer,
                              TitleSerialzier, GenreSerializer,
                              CategorySerializer, UserSerializer,
                              UserSingUpSerializer, SelfUserPageSerializer,
-                             TokenSerializer)
+                             TokenSerializer, TitleReadSerializer,
+                             TitleSerializer)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями произведений"""
     serializer_class = TitleSerialzier
     queryset = Title.objects.all()
-    # permission_classes = (IsAuthIsAdminPermission,)
+    permission_classes = (AdminOrReadOnly,)
 
-    def get_permissions(self):
-        if self.action == 'list':
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthIsAdminPermission]
-        return [permission() for permission in permission_classes]
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleSerializer
 
 
 class GenreViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
@@ -80,6 +80,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         IsAuthenticatedOrReadOnly,
         AuthorOrModeratorOrAdminOrReadOnly,
     )
+
 
     def get_queryset(self):
         '''Функция возвращения всех комментариев поста.'''

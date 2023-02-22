@@ -20,27 +20,34 @@ class GenreSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-class TitleSerialzier(serializers.ModelSerializer):
-    """Сериализатор для объекта класса Title"""
-    genre = GenreSerializer(many=True)
-    category = CategorySerializer()
-
-    def create(self, validated_data):
-        genres = validated_data.pop('genre')
-        category = validated_data.pop('category')
-        current_category, status = Category.objects.get_or_create(**category)
-        validated_data['category'] = current_category
-        title = Title.objects.create(**validated_data)
-
-        for genre in genres:
-            current_genres, status = Genre.objects.get_or_create(**genre)
-            GenreTitle.objects.create(genre=current_genres, title=title)
-        return title
+class TitleReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Title при действии 'list', 'retrieve'."""
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(
+        read_only=True,
+        many=True
+    )
 
     class Meta:
+        fields = '__all__'
         model = Title
-        fields = ('id', 'name', 'year',
-                  'description', 'category', 'genre')
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Title."""
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(),
+        slug_field='slug'
+    )
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
+        many=True
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Title
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -59,10 +66,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         """Валидация на уже существующий отзыв к произведению
         от одного автора."""
         review1 = Review.objects.filter(
-            author=self.context('request').user,
-            title=self.context('view').kwargs('title_id')
+            author=self.context['request'].user,
+            title=self.context['view'].kwargs['title_id']
         ).exists()
-        if self.context.get('request').method == 'POST' and review1:
+        if self.context['request'].method == 'POST' and review1:
             raise serializers.ValidationError(
                 'На одно произведение можно оставить только один отзыв!')
         return data
