@@ -26,7 +26,16 @@ class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями произведений"""
     serializer_class = TitleSerialzier
     queryset = Title.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, AdminPermission)
+    # permission_classes = (IsAuthenticatedOrReadOnly, AdminPermission)
+
+    def get_permissions(self):
+        if self.action == 'list':
+            permission_classes = [AllowAny]
+        elif self.action == 'destroy':
+            permission_classes = [IsAuthIsAdminPermission]
+        else:
+            permission_classes = [IsAuthIsAdminPermission]
+        return [permission() for permission in permission_classes]
 
     # def get_permissions(self):
     #     if self.action == 'list':
@@ -40,25 +49,44 @@ class GenreViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями жанров"""
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-    permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
+    # permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+
+    def get_permissions(self):
+        if self.action == 'list':
+            permission_classes = [AllowAny]
+        elif self.action == 'destroy':
+            permission_classes = [IsAuthIsAdminPermission]
+        else:
+            permission_classes = [IsAuthIsAdminPermission]
+        return [permission() for permission in permission_classes]
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями категорий"""
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
-    permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
+    # permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    # lookup_field = 'slug'
 
     # def get_permissions(self):
     #     if self.action == 'list':
     #         permissions_classes = [AllowAny]
     #     else:
     #         permissions_classes = [IsAuthIsAdminPermission]
-    #     return [permissions() for permission in permissions_classes]
+    #     return [permission() for permission in permissions_classes]
+    
+    def get_permissions(self):
+        if self.action == 'list':
+            permission_classes = [AllowAny]
+        elif self.action == 'destroy':
+            permission_classes = [IsAuthIsAdminPermission]
+        else:
+            permission_classes = [IsAuthIsAdminPermission]
+        return [permission() for permission in permission_classes]
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
