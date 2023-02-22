@@ -18,7 +18,7 @@ from api.permissions import (AuthorOrModeratorOrAdminOrReadOnly,
                              AdminPermission, IsAuthIsAdminPermission,
                              AdminOrReadOnly)
 from api.serializers import (ReviewSerializer, CommentSerializer,
-                             TitleSerialzier, GenreSerializer,
+                             GenreSerializer,
                              CategorySerializer, UserSerializer,
                              UserSingUpSerializer, SelfUserPageSerializer,
                              TokenSerializer, TitleReadSerializer,
@@ -27,7 +27,7 @@ from api.serializers import (ReviewSerializer, CommentSerializer,
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями произведений"""
-    serializer_class = TitleSerialzier
+    serializer_class = TitleSerializer
     queryset = Title.objects.all()
     permission_classes = (AdminOrReadOnly,)
 
