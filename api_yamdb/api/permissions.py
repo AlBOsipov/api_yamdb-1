@@ -54,3 +54,9 @@ class AuthorOrModeratorOrAdminOrReadOnly(permissions.BasePermission):
             or request.user.role == 'admin'
             or obj.author == request.user
         )
+
+
+class IsAuthIsAdminPermission(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == 'admin'

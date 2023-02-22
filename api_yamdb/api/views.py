@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Review, Title, Genre, Category, YaMdbUser
 from api.permissions import (AuthorOrModeratorOrAdminOrReadOnly,
-                             AdminPermission)
+                             AdminPermission, IsAuthIsAdminPermission)
 from api.serializers import (ReviewSerializer, CommentSerializer,
                              TitleSerialzier, GenreSerializer,
                              CategorySerializer, UserSerializer,
@@ -27,6 +27,13 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerialzier
     queryset = Title.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly, AdminPermission)
+
+    # def get_permissions(self):
+    #     if self.action == 'list':
+    #         permissions_classes = [AllowAny]
+    #     else:
+    #         permissions_classes = [IsAuthIsAdminPermission]
+    #     return [permissions() for permission in permissions_classes]
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -45,6 +52,13 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+
+    # def get_permissions(self):
+    #     if self.action == 'list':
+    #         permissions_classes = [AllowAny]
+    #     else:
+    #         permissions_classes = [IsAuthIsAdminPermission]
+    #     return [permissions() for permission in permissions_classes]
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
