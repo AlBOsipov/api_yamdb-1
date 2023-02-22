@@ -77,6 +77,7 @@ class YaMdbUser(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+        ordering = ('username',)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -93,7 +94,7 @@ class Category(models.Model):
     )
 
     class Meta:
-        # ordering = ('-name',)
+        ordering = ('name',)
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -112,7 +113,7 @@ class Genre(models.Model):
     )
 
     class Meta:
-        ordering = ('-name',)
+        ordering = ('name',)
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -132,9 +133,10 @@ class Title(models.Model):
         Category, null=True, on_delete=models.SET_NULL, related_name='titles'
     )
     genre = models.ManyToManyField(Genre, through='GenreTitle')
+    rating = models.IntegerField(blank=True, null=True,)
 
     class Meta:
-        # ordering = ('name', 'year', 'category', 'genres',)
+        ordering = ('name', 'year',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
@@ -171,6 +173,8 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        ordering = ('-pub_date',)
+        unique_together = ['author', 'title']
 
     def __str__(self):
         return self.text
@@ -189,6 +193,7 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+        ordering = ('-pub_date',)
 
     def __str__(self):
         return self.text
