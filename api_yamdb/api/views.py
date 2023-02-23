@@ -3,7 +3,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import status, mixins, filters, viewsets, permissions
+from rest_framework import status, mixins, filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,7 +15,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Review, Title, Genre, Category, YaMdbUser
 from api.permissions import (
-    AuthorOrModeratorOrAdminOrReadOnly, AdminPermission,
+    AuthorOrModeratorOrAdminOrReadOnly,
     IsAuthIsAdminPermission, AdminOrReadOnly
 )
 from api.serializers import (
@@ -46,16 +46,15 @@ class GenreViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
     """Вьюсет для работы с моделями жанров"""
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-    # permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
 
     def get_permissions(self):
         if self.action == 'list':
-            permission_classes = [AllowAny]
+            permission_classes = (AllowAny,)
         else:
-            permission_classes = [IsAuthIsAdminPermission]
+            permission_classes = (IsAuthIsAdminPermission,)
         return [permission() for permission in permission_classes]
 
 
@@ -64,16 +63,15 @@ class CategoriesViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
     """Вьюсет для работы с моделями категорий"""
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
-    # permission_classes = (AuthorOrModeratorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
 
     def get_permissions(self):
         if self.action == 'list':
-            permission_classes = [AllowAny]
+            permission_classes = (AllowAny,)
         else:
-            permission_classes = [IsAuthIsAdminPermission]
+            permission_classes = (IsAuthIsAdminPermission,)
         return [permission() for permission in permission_classes]
 
 
@@ -238,7 +236,7 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     http_method_names = ('get', 'post', 'patch', 'delete')
-    permission_classes = (IsAuthenticated, AdminPermission)
+    permission_classes = (IsAuthIsAdminPermission,)
 
     def partial_update(self, request, *args, **kwargs):
         """Переопределим PATCH."""
@@ -258,10 +256,10 @@ class UserViewSet(viewsets.ModelViewSet):
             )
         return super().destroy(request, *args, **kwargs)
 
-    # Эндпоинт /me
+    # Эндпоинт /me/
     @action(
         detail=False,
-        permission_classes=(permissions.IsAuthenticated,),
+        permission_classes=(IsAuthenticated,),
         methods=('GET', 'PATCH'),
         url_path='me',
         serializer_class=SelfUserPageSerializer
@@ -276,7 +274,8 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = SelfUserPageSerializer(
                 user, data=request.data, partial=True)
             # добавляем проверку на автора или админа
-            if not request.user.is_superuser and request.user != user:
+            if not (request.user.role == 'admin'
+                    or request.user.is_superuser) and request.user != user:
                 return Response(
                     {"message": "У вас нет прав для этой операции."},
                     status=status.HTTP_403_FORBIDDEN
