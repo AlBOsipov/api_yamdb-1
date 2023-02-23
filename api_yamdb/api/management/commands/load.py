@@ -113,4 +113,3 @@ class Command(BaseCommand):
         self.genre_title_load()
         self.review_load()
         self.comments_load()
-  
