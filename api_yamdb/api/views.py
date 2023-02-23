@@ -1,40 +1,44 @@
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import mixins
-from rest_framework import status, filters, viewsets, permissions
+from rest_framework import status, mixins, filters, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
-                                        IsAuthenticated, AllowAny)
-
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
+)
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Review, Title, Genre, Category, YaMdbUser
-from api.permissions import (AuthorOrModeratorOrAdminOrReadOnly,
-                             AdminPermission, IsAuthIsAdminPermission)
-from api.serializers import (ReviewSerializer, CommentSerializer,
-                             TitleSerialzier, GenreSerializer,
-                             CategorySerializer, UserSerializer,
-                             UserSingUpSerializer, SelfUserPageSerializer,
-                             TokenSerializer)
+from api.permissions import (
+    AuthorOrModeratorOrAdminOrReadOnly, AdminPermission,
+    IsAuthIsAdminPermission, AdminOrReadOnly
+)
+from api.serializers import (
+    ReviewSerializer, CommentSerializer, GenreSerializer,
+    CategorySerializer, UserSerializer, UserSingUpSerializer,
+    SelfUserPageSerializer, TokenSerializer,
+    TitleReadSerializer, TitleSerializer
+)
+from api.filter import TitleFilter
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с моделями произведений"""
-    serializer_class = TitleSerialzier
+    serializer_class = TitleSerializer
     queryset = Title.objects.all()
-    # permission_classes = (IsAuthIsAdminPermission,)
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
-    def get_permissions(self):
-        if self.action == 'list':
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthIsAdminPermission]
-        return [permission() for permission in permission_classes]
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleSerializer
 
 
 class GenreViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,

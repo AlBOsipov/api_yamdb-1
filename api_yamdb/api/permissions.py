@@ -60,3 +60,13 @@ class IsAuthIsAdminPermission(BasePermission):
 
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'admin'
+
+
+class AdminOrReadOnly(permissions.BasePermission):
+    """Разрешение доступа админу или чтение."""
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.user.is_authenticated:
+            return request.user.role == 'admin'
+        return False
