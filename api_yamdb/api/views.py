@@ -1,28 +1,30 @@
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import mixins
-from rest_framework import status, filters, viewsets, permissions
+from rest_framework import status, mixins, filters, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
-                                        IsAuthenticated, AllowAny)
-
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
+)
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Review, Title, Genre, Category, YaMdbUser
-from api.permissions import (AuthorOrModeratorOrAdminOrReadOnly,
-                             AdminPermission, IsAuthIsAdminPermission,
-                             AdminOrReadOnly)
-from api.serializers import (ReviewSerializer, CommentSerializer,
-                             GenreSerializer,
-                             CategorySerializer, UserSerializer,
-                             UserSingUpSerializer, SelfUserPageSerializer,
-                             TokenSerializer, TitleReadSerializer,
-                             TitleSerializer)
+from api.permissions import (
+    AuthorOrModeratorOrAdminOrReadOnly, AdminPermission,
+    IsAuthIsAdminPermission, AdminOrReadOnly
+)
+from api.serializers import (
+    ReviewSerializer, CommentSerializer, GenreSerializer,
+    CategorySerializer, UserSerializer, UserSingUpSerializer,
+    SelfUserPageSerializer, TokenSerializer,
+    TitleReadSerializer, TitleSerializer
+)
+from api.filter import TitleFilter
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -30,6 +32,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     queryset = Title.objects.all()
     permission_classes = (AdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -80,7 +84,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
         IsAuthenticatedOrReadOnly,
         AuthorOrModeratorOrAdminOrReadOnly,
     )
-
 
     def get_queryset(self):
         '''Функция возвращения всех комментариев поста.'''
