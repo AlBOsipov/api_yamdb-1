@@ -35,7 +35,8 @@ class Command(BaseCommand):
                 user.save()
 
     def category_load(self):
-        with io.open('static/data/category.csv', "r", encoding="utf-8") as file:
+        path = 'static/data/category.csv'
+        with io.open(path, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
             next(reader)
 
@@ -62,7 +63,8 @@ class Command(BaseCommand):
                 title.save()
 
     def genre_title_load(self):
-        with io.open('static/data/genre_title.csv', "r", encoding="utf-8") as file:
+        path = 'static/data/genre_title.csv'
+        with io.open(path, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
             next(reader)
 
@@ -91,7 +93,8 @@ class Command(BaseCommand):
                 review.save()
 
     def comments_load(self):
-        with io.open('static/data/comments.csv', "r", encoding="utf-8") as file:
+        path = 'static/data/comments.csv'
+        with io.open(path, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
             next(reader)
 
