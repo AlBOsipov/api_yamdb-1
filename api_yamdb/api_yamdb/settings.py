@@ -13,7 +13,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+MAX_LENGTH = 150
 # Application definition
 
 INSTALLED_APPS = [
