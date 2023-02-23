@@ -8,7 +8,7 @@ from reviews.models import (
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """Сериализатор для объекта класса Category"""
+    """Сериализатор для объекта класса Category."""
     class Meta:
         model = Category
         fields = ('name', 'slug')
@@ -16,7 +16,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    """Сериализатор для объекта класса Genre"""
+    """Сериализатор для объекта класса Genre."""
     class Meta:
         model = Genre
         fields = ('name', 'slug')
@@ -69,8 +69,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
 
     def validate(self, data):
-        """Валидация на уже существующий отзыв к произведению
-        от одного автора."""
+        """
+        Валидация на уже существующий отзыв к произведению от одного автора.
+        """
         review1 = Review.objects.filter(
             author=self.context['request'].user,
             title=self.context['view'].kwargs['title_id']
