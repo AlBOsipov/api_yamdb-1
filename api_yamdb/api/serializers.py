@@ -34,8 +34,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
         model = Title
 
     def get_rating(self, obj):
-        title_id = self.context.get('view').kwargs.get('pk')
-        return Review.objects.filter(title=title_id).aggregate(
+        return Review.objects.filter(title=obj).aggregate(
             Avg('score')).get('score__avg')
 
 
@@ -61,22 +60,21 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
-    title = serializers.PrimaryKeyRelatedField(
-        read_only=True)
 
     class Meta:
         fields = '__all__'
         model = Review
+        read_only_fields = ('id', 'title', 'pub_date', 'author',)
 
     def validate(self, data):
         """
         Валидация на уже существующий отзыв к произведению от одного автора.
         """
-        review1 = Review.objects.filter(
+        is_review_exist = Review.objects.filter(
             author=self.context['request'].user,
             title=self.context['view'].kwargs['title_id']
         ).exists()
-        if self.context['request'].method == 'POST' and review1:
+        if self.context['request'].method == 'POST' and is_review_exist:
             raise serializers.ValidationError(
                 'На одно произведение можно оставить только один отзыв!')
         return data
