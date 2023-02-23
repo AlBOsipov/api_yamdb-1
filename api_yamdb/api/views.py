@@ -15,7 +15,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Review, Title, Genre, Category, YaMdbUser
 from api.permissions import (
-    AuthorOrModeratorOrAdminOrReadOnly,
+    AuthorOrModeratorOrAdminOrReadOnly, IsAuthorOrAndAdmin,
     IsAuthIsAdminPermission, AdminOrReadOnly
 )
 from api.serializers import (
@@ -147,7 +147,7 @@ class CreateUserAPIView(APIView):
         if user:
             if user.email != email:
                 return Response(
-                    {'error': ('Несоответствие Email адреса.')},
+                    {'error': 'Несоответствие Email адреса.'},
                     status=status.HTTP_400_BAD_REQUEST)
             serializer = UserSingUpSerializer(user, data=request.data)
         else:
@@ -168,10 +168,10 @@ class CreateUserAPIView(APIView):
     def send_code_on_email(self, user, token):
         """Отправка кода подтверждения на почту."""
         header = 'Ваш код подтверждения'
-        message = ''.join([
-            f'Приветствуем {user.username} путник 10 спринта! \n',
+        message = (
+            f'Приветствуем {user.username} путник 10 спринта! \n'
             f'Держи свой код: {token}'
-        ])
+        )
         mail_from = 'verif@yamdb.ru'
         email = user.email
         try:
@@ -240,7 +240,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         """Переопределим PATCH."""
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not IsAuthIsAdminPermission:
             return Response(
                 {"message": "У вас нет прав для выполнения этой операции."},
                 status=status.HTTP_403_FORBIDDEN
@@ -249,7 +249,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         """"Переопределим DELETE."""
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not IsAuthIsAdminPermission:
             return Response(
                 {"message": "У вас нет прав для выполнения этой операции."},
                 status=status.HTTP_403_FORBIDDEN
@@ -270,17 +270,16 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             serializer = self.serializer_class(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        elif request.method == 'PATCH':
-            serializer = SelfUserPageSerializer(
-                user, data=request.data, partial=True)
-            # добавляем проверку на автора или админа
-            if not (request.user.role == 'admin'
-                    or request.user.is_superuser) and request.user != user:
-                return Response(
-                    {"message": "У вас нет прав для этой операции."},
-                    status=status.HTTP_403_FORBIDDEN
-                )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(status=status.HTTP_200_OK)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer = SelfUserPageSerializer(
+            user, data=request.data, partial=True
+        )
+        # добавляем проверку на автора или админа
+        if not IsAuthorOrAndAdmin:
+            return Response(
+                {"message": "У вас нет прав для этой операции."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)

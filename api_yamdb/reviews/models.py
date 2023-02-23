@@ -18,7 +18,7 @@ class UserManager(BaseUserManager):
     """Новые правила регистрации юзера."""
     def create_user(self, email, password, **extra_fields):
         if not email:
-            raise ValueError(('Пароль обязателен.'))
+            raise ValueError('Email обязателен.')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -31,9 +31,9 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
         extra_fields.setdefault('role', 'admin')  # установка роли 'admin'
         if extra_fields.get('is_staff') is not True:
-            raise ValueError(('Superuser must have is_staff=True.'))
+            raise ValueError('У суперюзера поле должно быть is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
-            raise ValueError(('Superuser must have is_superuser=True.'))
+            raise ValueError('У суперюзера должно быть is_superuser=True.')
         return self.create_user(email, password, **extra_fields)
 
 
@@ -60,7 +60,6 @@ class YaMdbUser(AbstractUser):
         choices=ROLE_SET,
         default='user',
     )
-    password = None
     confirmation_code = models.CharField(
         'Код подтвержедния',
         max_length=50,
