@@ -5,6 +5,7 @@ from reviews.models import (
     Review, Comment, Title, Category,
     Genre, YaMdbUser
 )
+from api_yamdb.settings import MAX_LENGTH
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -124,7 +125,7 @@ class UserSerializer(serializers.ModelSerializer):
 # Эндпоинт /users/me/
 class SelfUserPageSerializer(serializers.ModelSerializer):
     """Сериализатор своей страницы."""
-    last_name = serializers.CharField(max_length=150)
+    last_name = serializers.CharField(max_length=MAX_LENGTH)
 
     class Meta:
         fields = (
@@ -142,5 +143,5 @@ class SelfUserPageSerializer(serializers.ModelSerializer):
 # Эндпоинт /token/
 class TokenSerializer(serializers.Serializer):
     """Сериализатор получения токена."""
-    username = serializers.CharField(max_length=150,)
+    username = serializers.CharField(max_length=MAX_LENGTH,)
     confirmation_code = serializers.CharField(max_length=50,)
