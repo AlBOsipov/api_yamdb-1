@@ -238,24 +238,6 @@ class UserViewSet(viewsets.ModelViewSet):
     http_method_names = ('get', 'post', 'patch', 'delete')
     permission_classes = (IsAuthIsAdminPermission,)
 
-    def partial_update(self, request, *args, **kwargs):
-        """Переопределим PATCH."""
-        if not IsAuthIsAdminPermission:
-            return Response(
-                {"message": "У вас нет прав для выполнения этой операции."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().partial_update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        """"Переопределим DELETE."""
-        if not IsAuthIsAdminPermission:
-            return Response(
-                {"message": "У вас нет прав для выполнения этой операции."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().destroy(request, *args, **kwargs)
-
     # Эндпоинт /me/
     @action(
         detail=False,
