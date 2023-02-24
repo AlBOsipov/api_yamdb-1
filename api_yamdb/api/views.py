@@ -241,7 +241,7 @@ class UserViewSet(viewsets.ModelViewSet):
     # Эндпоинт /me/
     @action(
         detail=False,
-        permission_classes=(IsAuthenticated, ),
+        permission_classes=(IsAuthenticated,),
         methods=('GET', 'PATCH'),
         url_path='me',
         serializer_class=SelfUserPageSerializer
