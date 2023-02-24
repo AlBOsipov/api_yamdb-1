@@ -42,7 +42,7 @@ class YaMdbUser(AbstractUser):
     """Переопределенная модель пользователя."""
     username = models.CharField(
         'Имя пользователя',
-        max_length=150,
+        max_length=settings.MAX_LENGTH_USERNAME,
         unique=True,
         validators=[validate_name_me]
     )
@@ -63,7 +63,7 @@ class YaMdbUser(AbstractUser):
     )
     confirmation_code = models.CharField(
         'Код подтвержедния',
-        max_length=50,
+        max_length=settings.MAX_LENGTH_CODE,
         null=True,
         blank=False,
         default=None
