@@ -4,6 +4,7 @@ from django.db import models
 from django.core.validators import (
     MinValueValidator, MaxValueValidator, RegexValidator)
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.conf import settings
 
 from reviews.services import validate_name_me
 
@@ -176,7 +177,7 @@ class Review(models.Model):
         unique_together = ['author', 'title']
 
     def __str__(self):
-        return self.text[:15]
+        return self.text[:settings.COUNT_PER_PAGE]
 
 
 class Comment(models.Model):
@@ -195,4 +196,4 @@ class Comment(models.Model):
         ordering = ('-pub_date',)
 
     def __str__(self):
-        return self.text[:15]
+        return self.text[:settings.COUNT_PER_PAGE]
