@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import status, mixins, filters, viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import (
@@ -238,28 +238,10 @@ class UserViewSet(viewsets.ModelViewSet):
     http_method_names = ('get', 'post', 'patch', 'delete')
     permission_classes = (IsAuthIsAdminPermission,)
 
-    def partial_update(self, request, *args, **kwargs):
-        """Переопределим PATCH."""
-        if not IsAuthIsAdminPermission:
-            return Response(
-                {"message": "У вас нет прав для выполнения этой операции."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().partial_update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        """"Переопределим DELETE."""
-        if not IsAuthIsAdminPermission:
-            return Response(
-                {"message": "У вас нет прав для выполнения этой операции."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().destroy(request, *args, **kwargs)
-
     # Эндпоинт /me/
     @action(
         detail=False,
-        permission_classes=(IsAuthenticated,),
+        permission_classes=(IsAuthenticated, ),
         methods=('GET', 'PATCH'),
         url_path='me',
         serializer_class=SelfUserPageSerializer
