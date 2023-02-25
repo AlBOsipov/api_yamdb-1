@@ -143,5 +143,5 @@ class TokenSerializer(serializers.Serializer):
     """Сериализатор получения токена."""
     username = serializers.CharField(max_length=settings.MAX_LENGTH_USERNAME)
     confirmation_code = serializers.CharField(
-            max_length=settings.MAX_LENGTH_CODE
+        max_length=settings.MAX_LENGTH_CODE
     )
