@@ -14,7 +14,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # Срез из 15 первых символов текста для Отзывов и Комментариев
-COUNT_PER_PAGE: int = 15
+TEXT_LIMIT: int = 15
 
 MAX_LENGTH_USERNAME = 150
 MAX_LENGTH_CODE = 50

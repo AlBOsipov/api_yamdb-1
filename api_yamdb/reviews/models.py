@@ -177,7 +177,7 @@ class Review(models.Model):
         unique_together = ['author', 'title']
 
     def __str__(self):
-        return self.text[:settings.COUNT_PER_PAGE]
+        return self.text[:settings.TEXT_LIMIT]
 
 
 class Comment(models.Model):
@@ -196,4 +196,4 @@ class Comment(models.Model):
         ordering = ('-pub_date',)
 
     def __str__(self):
-        return self.text[:settings.COUNT_PER_PAGE]
+        return self.text[:settings.TEXT_LIMIT]
